@@ -1,0 +1,24 @@
+{
+  "name": "dvs",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/AdhamWalid/DvS.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/AdhamWalid/DvS/issues"
+  },
+  "homepage": "https://github.com/AdhamWalid/DvS#readme",
+  "dependencies": {
+    "discord.js": "^13.6.0",
+    "quickmongo": "^5.1.2"
+  }
+}
