@@ -18,6 +18,8 @@
   },
   "homepage": "https://github.com/AdhamWalid/DvS#readme",
   "dependencies": {
+    "@discordjs/rest": "^0.4.1",
+    "discord-modal": "^1.0.2",
     "discord.js": "^13.6.0",
     "quickmongo": "^5.1.2"
   }

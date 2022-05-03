@@ -1,11 +1,13 @@
 const Discord = require('discord.js')
 const client = new Discord.Client({intents : 32767 }) 
-    const prefix = "d!";
 const {Database}  = require("quickmongo");
-const db = new Database(`mongodb+srv://Velvet:cZQk4SVbG9utLM5h@cluster0.vx3jf.mongodb.net/dev-center?retryWrites=true&w=majority`);
+const db = new Database(`mongodb+srv://Adham:yZkCtO2Zt8t7PF8d@offarat-database.mwqdl.mongodb.net/offarat?retryWrites=true&w=majority`);
 const wait = (time) => new Promise(resolve => setTimeout(() => resolve(true), time))
-
-
+const prefix = '#';
+const DiscordModal = require('discord-modal')
+const { REST } = require('@discordjs/rest');
+const { Routes } = require('discord-api-types/v9');
+DiscordModal(client)
 function createid(length) {
     var result           = '';
     var characters       = '0123456789';
@@ -17,63 +19,390 @@ function createid(length) {
    return result;
 }
 client.on('ready' , async () => {
+
     await db.connect().then(
         console.log(`Connected To DataBase`)
     )
-    db.delete(`user_602758334520623125.staffid` , 000)
-    console.table(await db.all())
+    // db.delete(`user_602758334520623125.staffid` , 000)
+     console.table(await db.all())
     console.log(`${client.user.username} Online`)
+    client.user.setActivity(`your Offers` , {type : "WATCHING"})
+    client.user.setStatus('idle')
+    // await client.application.commands.set([]);
+
+    const commands = [{
+        name :"set-config",
+        description:"changes your server configs",
+        options : [{
+                name : "choose",
+                description : "What Exactly?",
+                type : 3,
+                choices: [
+                    {
+                        "name": "Server Config",
+                        "value": "server"
+                    },
+                    {
+                        "name": "Offers Config",
+                        "value": "offers"
+                    }
+                    
+                ],
+                required : true
+                }]
+    }]
+    
+const rest = new REST({ version: '9' }).setToken(`OTYzNzY4OTI1OTQ0OTQyNjMz.G5hSB1.4x7QxvJh14J3C6tuSoHGgFDv9grE_SpHw-v0Us`);
+
+(async () => {
+	try {
+		console.log('Started refreshing application (/) commands.');
+
+		await rest.put(
+			Routes.applicationGuildCommands("963768925944942633", "968948382930444378"),
+			{ body: commands },
+		);
+
+		console.log('Successfully reloaded application (/) commands.');
+	} catch (error) {
+		console.error(error);
+	}
+})();
+
 })
 
 client.on('messageCreate' , async (message) => {
-    if (message.content.startsWith(prefix + 'registration-panel')){
-        if (!message.author.id === '602758334520623125') return;
+    let data = await db.get(`config_${message.guildId}`)
+    if (message.content.startsWith(prefix + 'help')){
         let embed = new Discord.MessageEmbed()
-        .setAuthor({name : `Developers Center Regestration` , iconURL : message.guild.iconURL({dynamic : true})})
-        .setColor('BLURPLE')
-        .addField('How To Register?' , `Click The Button!`,true)
+        .setColor('RANDOM')
+        .setDescription(`<:Check:949722090238541904> __**Setup Commands**__\n\`/set-config\`\n\`/show-config\`\n\n<:884877255459889203:891906828638756914> **__Admin Commands__**\n\`${prefix}fb\`\n\`${prefix}blacklist\`\n\`${prefix}unblackist\`\n\`${prefix}tag\`\n\`${prefix}fb\`\n\n<:dotfill:949721316553015366> __**General Commands**__\n\`${prefix}avatar\`\n\`${prefix}banner\`\n\`${prefix}come\`\n\`${prefix}ping\``)
+        .setThumbnail(message.guild.iconURL({dynamic:true}))
+        .setImage(data.line_url)
+        .setAuthor({name : `${client.user.username} Help Menu`})
+        message.reply({embeds : [embed]})
+    }
+})
 
-        let row = new Discord.MessageActionRow()
-        .addComponents(new Discord.MessageButton()
-        .setCustomId('registration_btn')
-        .setLabel(`Register`)
-        .setStyle('PRIMARY')
+client.on(`interactionCreate`,(interaction)=>{
+    if(interaction.isCommand()){
+     if(interaction.commandName == "set-config"){
+        const choice = interaction.options.getString('choose')
+        if (choice === 'server'){
+        const textinput = new DiscordModal.TextInput()
+        .setCustomId("server_config")
+        .setTitle("Server-Config")
+        .addComponents(
+          new DiscordModal.TextInputField()
+          .setLabel("Offers Role ID")
+          .setStyle("short")
+          .setCustomId("role_id")
+          .setRequired(true),//Its default value is false,
+          new DiscordModal.TextInputField()
+          .setLabel("Line URl")
+          .setStyle("short")
+          .setMin(0)
+          .setMax(4000)
+          .setCustomId("line_url"),
+          new DiscordModal.TextInputField()
+          .setLabel("Suggestion Room ID")
+          .setStyle("short")
+          .setMin(0)
+          .setMax(21)
+          .setCustomId("sug_id"),
+          new DiscordModal.TextInputField()
+          .setLabel("Feedback Room ID")
+          .setStyle("short")
+          .setMin(0)
+          .setMax(21)
+          .setCustomId("feedback_id"),
+          new DiscordModal.TextInputField()
+          .setLabel("Transfer Room ID")
+          .setStyle("short")
+          .setMin(0)
+          .setMax(21)
+          .setCustomId("transfer_id"),
+          )
+
+          
+          client.TextInputs.open(interaction, textinput)   
+        } else if (choice === 'offers'){
+            const textinput = new DiscordModal.TextInput()
+            .setCustomId("offers_config")
+            .setTitle("Offers-Config")
+            .addComponents(
+                new DiscordModal.TextInputField()
+                .setLabel("Ticket Category")
+                .setStyle("short")
+                .setMin(0)
+                .setMax(21)
+                .setCustomId("category_id"),
+                new DiscordModal.TextInputField()
+                .setLabel("Tax Channel ID")
+                .setStyle("short")
+                .setMin(0)
+                .setMax(21)
+                .setCustomId("tax_id"),
+                new DiscordModal.TextInputField()
+                .setLabel("Tag")
+                .setStyle("short")
+                .setMin(0)
+                .setMax(21)
+                .setCustomId("tag_id")
+              )
+    
+              
+              client.TextInputs.open(interaction, textinput)   
+            }
+     }
+    }
+    })
+
+    
+ client.on("interactionTextInput",async(interaction)=>{
+    if(interaction.customId == 'server_config'){
+       await db.set(`config_${interaction.guild.id}` , {
+            offer_role: `${interaction.fields[0].value}`,
+            line_url :`${interaction.fields[1].value}`,
+            sug_id :`${interaction.fields[2].value}`,
+            feedback_id :`${interaction.fields[3].value}`,
+            transfer_id :`${interaction.fields[4].value}`,
+            time : `${Date.now().toString().slice(0 , 10)}`,
+
+        })
+        interaction.reply(`<:884877216511557686:891907035858341898> **Applying Changes Please Wait.**`).then(
+        interaction.channel.send(`<:power_red_circle:894173022192300062> Changes Uploaded!`)
         )
-        
-        message.channel.send({embeds : [embed] , components: [row]})
+    } else     if(interaction.customId == 'offers_config'){
+        let data = await db.get(`config_${interaction.guild.id}`)
+        data["category_id"] = interaction.fields[0].value
+        data["tax_id"] = interaction.fields[1].value
+        data["tag_id"] = interaction.fields[2].value
+
+        await db.set(`config_${interaction.guild.id}` , data)
+
+
+         interaction.reply(`<:884877216511557686:891907035858341898> **Applying Changes Please Wait.**`).then(
+         interaction.channel.send(`<:power_red_circle:894173022192300062> Changes Uploaded!`)
+         )
+     }
+})
+
+client.on('messageCreate' , async (message) => {
+    if (message.content === prefix + 'ping'){
+        message.reply(`**${client.user.username}'s Ping \`${client.ws.ping}ms\`**`)
     }
 })
-client.on('interactionCreate' , async (interaction) => {
-    if (interaction.isButton()){
-        if (interaction.customId === 'registration_btn'){
-            let info = db.get(`user_${interaction.user.id}.staffid`)
-            let code = createid(3)
-            await db.set(`user_${interaction.user.id}` , {
-                staff : true,
-                staffid :code
-            })
 
-            if (db.get(`user_${interaction.user.id}.staffid`) === null) return interaction.reply({content:`You already registerd before.` , ephemeral:true})
-            
-            console.log(await db.get(`user_${interaction.user.id}.staffid`))
-            let embed  = new Discord.MessageEmbed()
-            .setAuthor({name :`Registration Complete`})
-            .setColor('BLURPLE')
-            .addField('Staff ID' , `${await db.get(`user_${interaction.user.id}.staffid`)}` , true)
-            .addField('User' , `${interaction.user.username}` , true)
-            .addField('Registration Time' , `<t:${Date.now().toString().slice(0 , 10)}:F>` , true)
-            interaction.member.setNickname(`${await db.get(`user_${interaction.user.id}.staffid`)} | ${interaction.user.username}`)
-            const role = await interaction.guild.roles.cache.get("966060521977696327")// ايدي رول 
-            let throle = interaction.guild.roles.cache.get('966060521977696327');
-              interaction.guild.members.cache.get(interaction.user.id).roles.add(throle)
-              client.channels.cache.get('966108394492669972').send({embeds : [embed]})
-            interaction.user.send({embeds : [embed]})
-            interaction.reply({content : 'Registration Complete. (Please Check your Dm)' , ephemeral : true})
+client.on('messageCreate' , async (message) => {
+    if (message.content === `<@${client.user.id}>`){
+        message.reply(`**${client.user.username}'s Server Prefix is \`${prefix}\`**`)
+    }
+})
+
+client.on('messageCreate' , async (message) => {
+    let feedback_id = await db.get(`config_${message.guildId}.feedback_id`)
+    let line_url = await db.get(`config_${message.guildId}.line_url`)
+
+    if (message.channel.id === feedback_id){
+        if (message.author.bot) return;
+        let embed = new Discord.MessageEmbed()
+        .setAuthor({name : `Thanks For Your Feedback` , iconURL : `${message.author.avatarURL({dynamic:true})}`})
+        .setImage(line_url)
+        .setColor('RANDOM')
+        message.reply({embeds : [embed]})
+    }
+})
+
+
+client.on('messageCreate' , async (message) => {
+    let sug_id = await db.get(`config_${message.guildId}.sug_id`)
+    let line_url = await db.get(`config_${message.guildId}.line_url`)
+
+    if (message.channel.id === sug_id){
+        if (message.author.bot) return;
+        message.reply({content : `<:dotfill:949721316553015366> **Thanks For Your Suggestion**`}).then(
+            message.channel.send(line_url)
+        )
+    }
+})
+
+client.on('messageCreate' , async (message) => {
+    let line_url = await db.get(`config_${message.guildId}.line_url`)
+
+    if (message.content.startsWith(prefix + 'come')){
+        let mention = message.mentions.users.first();
+        if (!mention) return message.reply('Please Mention Someone.')
+        let embed = new Discord.MessageEmbed()
+        .setAuthor({name :'Someone Needs you here'})
+        .addField(`Channel` , `${message.channel}`)
+        .setImage(line_url)
+        .setColor('RANDOM')
+        mention.send({embeds : [embed]})
+        message.reply({content : `**Succesfully Called ${mention} Please Wait ...**`})
+    }
+})
+
+client.on('messageCreate' , async (message) => {
+    let transfer_id = await db.get(`config_${message.guildId}.transfer_id`)
+    let line_url = await db.get(`config_${message.guildId}.line_url`)
+
+    if (message.channel.id === transfer_id){
+        let tran =["transferred" , "بتحويل"]
+        if (!message.author.bot) return;
+        if (tran.includes(message.content)){
+            message.channel.send(line_url)
         }
+        
     }
 })
 
 
 
+client.on('messageCreate' , async (message) => {
+    if (message.content.startsWith(prefix + 'banner')){
+        let mention = message.mentions.members.first() || message.member;
+        mention.user.fetch({ force: true }).then((user) => {
 
-client.login('OTMwMTAwNDg3MTcxMjQwMDE3.Ydw9lA.scyMNO7dmB6m0LFL_qykHD-8wkY')
+        let embed = new Discord.MessageEmbed()
+        .setAuthor({name :`${user.username}` , iconURL: user.avatarURL({dynamic:true})})
+        .setImage(user.bannerURL({dynamic:true , size : 1024}))
+        .setColor('RANDOM')
+        .setFooter({text : `Requested By ${message.author.username}`})
+        message.reply({embeds:[embed]})
+
+        })
+    }
+})
+
+
+client.on('messageCreate' , async (message) => {
+    if (message.content.startsWith(prefix + 'avatar')){
+        let mention = message.mentions.members.first() || message.member;
+        mention.user.fetch({ force: true }).then((user) => {
+
+        let embed = new Discord.MessageEmbed()
+        .setAuthor({name :`${user.username}` , iconURL: user.avatarURL({dynamic:true})})
+        .setImage(user.avatarURL({dynamic:true , size : 1024}))
+        .setColor('RANDOM')
+        .setFooter({text : `Requested By ${message.author.username}`})
+        message.reply({embeds:[embed]})
+
+        })
+    }
+})
+
+
+
+client.on('channelCreate' , async (channel) => {
+    let data = await db.get(`config_${channel.guildId}`)
+
+    if (channel.parentId === data.category_id){
+
+        let msg = `
+        > \`-\` <a:923963216768413737:969353421201244182> Netflix
+
+        > \`-\` <a:942522794720264252:969349527729496095> Instgram
+
+        > \`-\` <a:930442342861787157:969353728480137216> Nitro
+
+        > \`-\` <:930444814816780319:969353760130334720> Visa
+
+        > \`-\` <a:930443031402905620:969349526190194738> Bot
+
+        > \`-\` <a:930441960622288917:969349525045149747> Credit
+        
+        > \`-\` <a:942424975099461652:969349521836478528> Tiktok
+
+        > \`-\` <:930441433830285352:969354354903646268> Spotify
+
+        > \`-\` <:930441459902054461:969354354786201670> Shahid
+
+        > \`-\` <a:930445072858759218:969349523363233802> Vote
+
+        > \`-\` <:12:969349601599586414> Pubg UC
+
+        > \`-\` <a:900905309713866823:969349524571193354> Boost
+`
+        let embed = new Discord.MessageEmbed()
+
+
+
+        .setAuthor({name :`Please Write Your Request`,  iconURL : channel.guild.iconURL({dynamic:true})})
+        .setThumbnail(channel.guild.iconURL({dynamic:true}))
+        .setDescription(`${msg}`)
+        .setColor('GOLD')
+        .setImage(data.line_url)
+        .setFooter({text : `${channel.guild.name}` , iconURL : channel.guild.iconURL({dynamic:true})})
+        channel.send({content : `||@\`everyone\`||` , embeds : [embed] })
+   
+    }
+})
+
+client.on('messageCreate' , async (message) => {
+    let data = await db.get(`config_${message.guildId}`)
+
+    if (message.content.startsWith(prefix + 'fb')){
+        let mention = message.mentions.users.first();
+        if (!mention) return message.react('❌');
+        let embed = new Discord.MessageEmbed()
+        .setAuthor({name : `Please Give us your feedback` , iconURL :message.guild.iconURL({dynamic:true})})
+        .setColor("GOLD")
+        .setImage(data.line_url)
+        message.reply({content:`${mention} ~ ~ <#${data.feedback_id}>` , embeds:[embed]})
+
+    }
+})
+
+client.on('messageCreate' , async (message) => {
+    let data = await db.get(`config_${message.guildId}`)
+
+    if (message.content.startsWith(prefix + 'tag')){
+        let mention = message.mentions.members.first();
+        if (!mention) return message.react('❌');
+        await mention.setNickname(`${data.tag_id} ${mention.user.username}`)
+        let embed = new Discord.MessageEmbed()
+        .setAuthor({name : `Tag Added!` , iconURL :message.guild.iconURL({dynamic:true})})
+        .setColor("RANDOM")
+        .setImage(data.line_url)
+        message.reply({embeds:[embed]})
+
+    }
+})
+
+
+client.on('messageCreate' , async (message) => {
+    let data = await db.get(`config_${message.guildId}`)
+    if (message.content.startsWith(prefix + 'blacklist')){
+        let args = message.content.split(" ").slice(1)
+        let mention = message.mentions.members.first() || await client.users.fetch(args[0]); 
+        console.log(client.users.cache.get(args[0]))
+        if (!mention) return message.react('❌');
+        mention.ban()
+        let embed = new Discord.MessageEmbed()
+        .setAuthor({name : `${mention.username} Blacklisted!` , iconURL : message.guild.iconURL({dynamic:true})})
+        .setImage(data.line_url)
+        .setColor('RANDOM')
+
+        message.reply({embeds: [embed]})
+
+    }
+})
+
+client.on('messageCreate' , async (message) => {
+    let data = await db.get(`config_${message.guildId}`)
+    if (message.content.startsWith(prefix + 'unblacklist')){
+        let args = message.content.split(" ").slice(1)
+        let mention = message.mentions.members.first() || await client.users.fetch(args[0]); 
+        console.log(client.users.cache.get(args[0]))
+        if (!mention) return message.react('❌');
+        let embed = new Discord.MessageEmbed()
+        .setAuthor({name : `${mention.username} Un-Blacklisted!` , iconURL : message.guild.iconURL({dynamic:true})})
+        .setImage(data.line_url)
+        .setColor('RANDOM')
+        message.reply({embeds: [embed]})
+    }
+})
+
+
+client.login(`OTYzNzY4OTI1OTQ0OTQyNjMz.G5hSB1.4x7QxvJh14J3C6tuSoHGgFDv9grE_SpHw-v0Us`)
