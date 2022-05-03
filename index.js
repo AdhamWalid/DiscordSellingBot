@@ -569,4 +569,25 @@ client.on('messageCreate' , async (message) => {
 
 
 
+client.on('messageCreate' , async (message) => {
+    let data = await db.get(`config_${message.guildId}`)
+
+    if (message.channel.id === data.tax_id){
+        const num = message.content.replace("k","000").replace("m", "000000").replace('M', "000000").replace('K', "000")
+        if (message.author.bot) return;
+    var numerr = Math.floor(num);
+        if (numerr < 0 || numerr == NaN || !numerr) {
+          return message.reply({ content: "__Error That's Not an Integer__"} );
+        }
+        var tax = 5.3; 
+        var taxval = Math.floor(numerr * (tax / 100));
+        var amount = Math.floor(numerr - taxval);
+        var amountfinal = Math.floor(numerr + taxval);
+
+    message.reply({content : `> Your Tax __**${amountfinal}**__`})
+    }
+    })
+
+
+
 client.login(`OTYzNzY4OTI1OTQ0OTQyNjMz.G5hSB1.4x7QxvJh14J3C6tuSoHGgFDv9grE_SpHw-v0Us`)
