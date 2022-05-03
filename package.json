@@ -18,9 +18,14 @@
   },
   "homepage": "https://github.com/AdhamWalid/DvS#readme",
   "dependencies": {
+    "@discordjs/opus": "^0.5.3",
     "@discordjs/rest": "^0.4.1",
     "discord-modal": "^1.0.2",
+    "discord-player": "^5.2.2",
     "discord.js": "^13.6.0",
+    "ffmpeg-static": "^4.4.1",
+    "node-opus": "^0.3.3",
+    "opusscript": "^0.0.8",
     "quickmongo": "^5.1.2"
   }
 }

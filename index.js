@@ -8,6 +8,8 @@ const DiscordModal = require('discord-modal')
 const { REST } = require('@discordjs/rest');
 const { Routes } = require('discord-api-types/v9');
 DiscordModal(client)
+const { Player, QueryType, QueueRepeatMode } = require("discord-player");
+const player = new Player(client);
 function createid(length) {
     var result           = '';
     var characters       = '0123456789';
@@ -536,5 +538,34 @@ client.on('interactionCreate', async interaction => {
         }});
 
         
+
+        
+
+client.on('messageCreate' , async (message) => {
+    if (message.content.startsWith(prefix + 'play')){
+        let query = message.content.split(' ').slice(1).join(" ")
+        console.log(query)
+        const queue = player.createQueue(message.guild, {
+            metadata: {
+                channel: message.channel
+            }
+        });
+        try {
+            if (!queue.connection) await queue.connect(message.member.voice.channel);
+        } catch {
+            queue.destroy();
+        }
+        const track = await player.search(query, {
+            requestedBy: message.user
+        }).then(x => x.tracks[0]);
+        if (!track) return await message.react({ content: `❌ | **${query}** not found!` });
+
+        queue.play(track);
+        console.log(track)
+        return await message.reply({ content: `⏱️ | Loading  **${track.title}**!` });
+    
+    }
+})
+
 
 client.login(`OTYzNzY4OTI1OTQ0OTQyNjMz.G5hSB1.4x7QxvJh14J3C6tuSoHGgFDv9grE_SpHw-v0Us`)
