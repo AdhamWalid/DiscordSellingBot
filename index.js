@@ -23,6 +23,16 @@ client.on('ready' , async () => {
     await db.connect().then(
         console.log(`Connected To DataBase`)
     )
+
+    const permissions = [
+        {
+            id: '602758334520623125',
+            type: 'USER',
+            permission: true,
+        },
+    ];
+
+    
     // db.delete(`user_602758334520623125.staffid` , 000)
      console.table(await db.all())
     console.log(`${client.user.username} Online`)
@@ -50,7 +60,21 @@ client.on('ready' , async () => {
                 ],
                 required : true
                 }]
-    }]
+    },
+    {
+        name :"show-config",
+        description:"shows your server configs",
+    },{
+        name : "eval",
+        description : "Evals a Certain Code",
+        options : [{
+        name : "code",
+        description : "First Argument",
+        type : "3",
+        required : true,
+}]
+}
+]
     
 const rest = new REST({ version: '9' }).setToken(`OTYzNzY4OTI1OTQ0OTQyNjMz.G5hSB1.4x7QxvJh14J3C6tuSoHGgFDv9grE_SpHw-v0Us`);
 
@@ -148,7 +172,20 @@ client.on(`interactionCreate`,(interaction)=>{
                 .setStyle("short")
                 .setMin(0)
                 .setMax(21)
-                .setCustomId("tag_id")
+                .setCustomId("tag_id"),
+                new DiscordModal.TextInputField()
+                .setLabel("Team Post Room ID")
+                .setStyle("short")
+                .setMin(0)
+                .setMax(21)
+                .setCustomId("post_id"),
+                new DiscordModal.TextInputField()
+                .setLabel("Offer Post Room ID")
+                .setStyle("short")
+                .setMin(0)
+                .setMax(21)
+                .setCustomId("offer_post_id"),
+
               )
     
               
@@ -162,11 +199,12 @@ client.on(`interactionCreate`,(interaction)=>{
  client.on("interactionTextInput",async(interaction)=>{
     if(interaction.customId == 'server_config'){
        await db.set(`config_${interaction.guild.id}` , {
-            offer_role: `${interaction.fields[0].value}`,
+            discount_role: `${interaction.fields[0].value}`,
             line_url :`${interaction.fields[1].value}`,
             sug_id :`${interaction.fields[2].value}`,
             feedback_id :`${interaction.fields[3].value}`,
             transfer_id :`${interaction.fields[4].value}`,
+
             time : `${Date.now().toString().slice(0 , 10)}`,
 
         })
@@ -178,6 +216,9 @@ client.on(`interactionCreate`,(interaction)=>{
         data["category_id"] = interaction.fields[0].value
         data["tax_id"] = interaction.fields[1].value
         data["tag_id"] = interaction.fields[2].value
+        data["post_id"] =interaction.fields[3].value
+        data["offer_post_id"] =interaction.fields[4].value
+        data["offer_post_id"] =interaction.fields.value
 
         await db.set(`config_${interaction.guild.id}` , data)
 
@@ -404,5 +445,97 @@ client.on('messageCreate' , async (message) => {
     }
 })
 
+
+client.on(`interactionCreate`,async(interaction)=>{
+    if(interaction.isCommand()){
+     if(interaction.commandName == "show-config"){
+    let data = await db.get(`config_${interaction.guildId}`)
+    if (!data) return interaction.reply(`This Server Does not have an active configuration please use \`/set-config\``)
+    let embed = new Discord.MessageEmbed()
+    .setAuthor({name :`${interaction.guild.name}'s Configuration` , iconURL : interaction.guild.iconURL({dynamic:true})})
+    .addField(`Offers Role` , `<@&${data.discount_role}>` , true)
+    .addField(`Suggestion Channel` , `<#${data.sug_id}>` , true)
+    .addField(`Feedback Channel` , `<#${data.feedback_id}>` , true)
+    .addField(`Category Channel` , `<#${data.category_id}>` , true)
+    .addField(`Transfer Channel ` , `<#${data.transfer_id}>` , true)
+    .addField(`Tag ` , `${data.tag_id}` , true)
+    .addField(`Tax Channel ` , `<#${data.tax_id}>` , true)
+    .addField(`Line URL` , `(Displayed as Image)` , true)
+    .setImage(data.line_url)
+    .setColor('DARK_GOLD')
+    .setThumbnail(interaction.guild.iconURL({dynamic:true}))
+
+    interaction.reply({embeds:[embed]})
+
+
+    
+    }}})
+
+
+    client.on('messageCreate' , async (message) => {
+        let discount_role = await db.get(`config_${message.guildId}.discount_role`)
+        let offer_post_id = await db.get(`config_${message.guildId}.offer_post_id`)
+        let post_id = await db.get(`config_${message.guildId}.post_id`)
+        let line_url = await db.get(`config_${message.guildId}.line_url`)
+
+    
+        if (message.channel.id === post_id){
+            if (message.author.bot) return;
+            
+            message.guild.channels.cache.get(offer_post_id).send(`${message.content}\n\n**> Mention : <@&${discount_role}>\n> Posted By ${message.author}**`)
+            message.guild.channels.cache.get(offer_post_id).send(line_url)
+            message.reply(`** __Posted__ **`).then(async (m) => {
+                m.react('894173022192300062')
+            })
+        }
+    })
+
+    process.on("unhandledRejection", error => console.error("Promise rejection:", error)
+    );
+
+
+    
+client.on('interactionCreate', async interaction => {
+    if (!interaction.isCommand()) return;
+    if(interaction.commandName == "eval"){  
+       
+      const args = interaction.options.getString('code')
+  
+      
+      const vera = ['602758334520623125']
+      if (!vera.includes(interaction.user.id)) interaction.reply(`**ONLY Vèra#2662 Can use this Command**`);
+  
+      try {
+        var result = args;
+        let noResultArg = new Discord.MessageEmbed()
+        .setColor("#e31212")
+        .setDescription("ERROR: No valid eval args were provided")
+        if (!result) return interaction.reply({editReply : [noResultArg] , ephemeral : true })
+        let evaled = await eval(result);
+        console.log((result));
+        
+  
+        let resultSuccess = new Discord.MessageEmbed()
+        .setColor("GREEN")
+        .setTitle("Success")
+        .addField(`Input:\n`, '```js\n' + `${args}` + '```', false)
+        .addField(`Output:\n`, '```js\n' + evaled + '```', true)
+        
+        interaction.reply({embeds : [resultSuccess] , ephemeral : true })
+        
+      } catch (error) {
+        let resultError = new Discord.MessageEmbed()
+        .setColor("#e31212")
+        .setTitle("An error has occured")
+        .addField(`Input:\n`, '```js\n' + `${result}` + '```', false)
+        .addField(`Output:\n`, '```js\n' + `${error.message}` + '```', true)
+        //.setDescription(`Output:\n\`\`\`${err}\`\`\``)
+        return interaction.reply({embeds : [resultError] , ephemeral : true})
+      }
+  
+             
+        }});
+
+        
 
 client.login(`OTYzNzY4OTI1OTQ0OTQyNjMz.G5hSB1.4x7QxvJh14J3C6tuSoHGgFDv9grE_SpHw-v0Us`)
