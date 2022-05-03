@@ -102,7 +102,7 @@ client.on('messageCreate' , async (message) => {
     if (message.content.startsWith(prefix + 'help')){
         let embed = new Discord.MessageEmbed()
         .setColor('RANDOM')
-        .setDescription(`<:Check:949722090238541904> __**Setup Commands**__\n\`/set-config\`\n\`/show-config\`\n\n<:884877255459889203:891906828638756914> **__Admin Commands__**\n\`${prefix}fb\`\n\`${prefix}blacklist\`\n\`${prefix}unblackist\`\n\`${prefix}tag\`\n\`${prefix}fb\`\n\n<:dotfill:949721316553015366> __**General Commands**__\n\`${prefix}avatar\`\n\`${prefix}banner\`\n\`${prefix}come\`\n\`${prefix}ping\``)
+        .setDescription(`<:Check:949722090238541904> __**Setup Commands**__\n\`/set-config\`\n\`/show-config\`\n\n<:884877255459889203:891906828638756914> **__Admin Commands__**\n\`${prefix}fb\`\n\`${prefix}blacklist\`\n\`${prefix}unblackist\`\n\`${prefix}tag\`\n\`${prefix}fb\`\n\n<:dotfill:949721316553015366> __**General Commands**__\n\`${prefix}avatar\`\n\`${prefix}banner\`\n\`${prefix}come\`\n\`${prefix}ping\`\n\n__**Music Commands**__\n\`${prefix}play\`\n\n__**System Commands**__\n+UnderWork`)
         .setThumbnail(message.guild.iconURL({dynamic:true}))
         .setImage(data.line_url)
         .setAuthor({name : `${client.user.username} Help Menu`})
@@ -566,6 +566,7 @@ client.on('messageCreate' , async (message) => {
     
     }
 })
+
 
 
 client.login(`OTYzNzY4OTI1OTQ0OTQyNjMz.G5hSB1.4x7QxvJh14J3C6tuSoHGgFDv9grE_SpHw-v0Us`)
