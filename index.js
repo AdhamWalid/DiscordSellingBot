@@ -204,7 +204,6 @@ client.on(`interactionCreate`,(interaction)=>{
             sug_id :`${interaction.fields[2].value}`,
             feedback_id :`${interaction.fields[3].value}`,
             transfer_id :`${interaction.fields[4].value}`,
-
             time : `${Date.now().toString().slice(0 , 10)}`,
 
         })
