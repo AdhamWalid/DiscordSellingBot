@@ -100,13 +100,28 @@ const rest = new REST({ version: '9' }).setToken(`OTYzNzY4OTI1OTQ0OTQyNjMz.G5hSB
 client.on('messageCreate' , async (message) => {
     let data = await db.get(`config_${message.guildId}`)
     if (message.content.startsWith(prefix + 'help')){
+        let row = new Discord.MessageActionRow()
+        .addComponents(new Discord.MessageButton()
+        .setCustomId('admin_btn')
+        .setLabel(`Admin`)
+        .setStyle('PRIMARY'),
+        new Discord.MessageButton()
+        .setCustomId('general_btn')
+        .setLabel(`General`)
+        .setStyle('PRIMARY'),
+        new Discord.MessageButton()
+        .setCustomId('music_btn')
+        .setLabel(`Music`)
+        .setStyle('PRIMARY'))
+
+
         let embed = new Discord.MessageEmbed()
         .setColor('RANDOM')
         .setDescription(`<:Check:949722090238541904> __**Setup Commands**__\n\`/set-config\`\n\`/show-config\`\n\n<:884877255459889203:891906828638756914> **__Admin Commands__**\n\`${prefix}fb\`\n\`${prefix}blacklist\`\n\`${prefix}unblackist\`\n\`${prefix}tag\`\n\`${prefix}fb\`\n\n<:dotfill:949721316553015366> __**General Commands**__\n\`${prefix}avatar\`\n\`${prefix}banner\`\n\`${prefix}come\`\n\`${prefix}ping\`\n\n__**Music Commands**__\n\`${prefix}play\`\n\n__**System Commands**__\n+UnderWork`)
         .setThumbnail(message.guild.iconURL({dynamic:true}))
         .setImage(data.line_url)
         .setAuthor({name : `${client.user.username} Help Menu`})
-        message.reply({embeds : [embed]})
+        message.reply({embeds : [embed] , components : [row]})
     }
 })
 
@@ -422,7 +437,7 @@ client.on('messageCreate' , async (message) => {
         if (!mention) return message.react('❌');
         mention.ban()
         let embed = new Discord.MessageEmbed()
-        .setAuthor({name : `${mention.username} Blacklisted!` , iconURL : message.guild.iconURL({dynamic:true})})
+        .setAuthor({name : `${mention.user.username} Blacklisted!` , iconURL : message.guild.iconURL({dynamic:true})})
         .setImage(data.line_url)
         .setColor('RANDOM')
 
