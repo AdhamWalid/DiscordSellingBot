@@ -100,19 +100,7 @@ const rest = new REST({ version: '9' }).setToken(`OTYzNzY4OTI1OTQ0OTQyNjMz.G5hSB
 client.on('messageCreate' , async (message) => {
     let data = await db.get(`config_${message.guildId}`)
     if (message.content.startsWith(prefix + 'help')){
-        let row = new Discord.MessageActionRow()
-        .addComponents(new Discord.MessageButton()
-        .setCustomId('admin_btn')
-        .setLabel(`Admin`)
-        .setStyle('PRIMARY'),
-        new Discord.MessageButton()
-        .setCustomId('general_btn')
-        .setLabel(`General`)
-        .setStyle('PRIMARY'),
-        new Discord.MessageButton()
-        .setCustomId('music_btn')
-        .setLabel(`Music`)
-        .setStyle('PRIMARY'))
+
 
 
         let embed = new Discord.MessageEmbed()
@@ -121,7 +109,7 @@ client.on('messageCreate' , async (message) => {
         .setThumbnail(message.guild.iconURL({dynamic:true}))
         .setImage(data.line_url)
         .setAuthor({name : `${client.user.username} Help Menu`})
-        message.reply({embeds : [embed] , components : [row]})
+        message.reply({embeds : [embed]})
     }
 })
 
