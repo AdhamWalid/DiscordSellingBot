@@ -84,10 +84,10 @@ const rest = new REST({ version: '9' }).setToken(`OTYzNzY4OTI1OTQ0OTQyNjMz.G5hSB
 	try {
 		console.log('Started refreshing application (/) commands.');
 
-		await rest.put(
-			Routes.applicationGuildCommands("963768925944942633"),
-			{ body: commands },
-		);
+        await rest.put(
+            Routes.applicationCommands(client.user.id),
+            { body: commands },
+        );
 
 		console.log('Successfully reloaded application (/) commands.');
 	} catch (error) {
@@ -107,7 +107,6 @@ client.on('messageCreate' , async (message) => {
         .setColor('RANDOM')
         .setDescription(`<:Check:949722090238541904> __**Setup Commands**__\n\`/set-config\`\n\`/show-config\`\n\n<:884877255459889203:891906828638756914> **__Admin Commands__**\n\`${prefix}fb\`\n\`${prefix}blacklist\`\n\`${prefix}unblackist\`\n\`${prefix}tag\`\n\`${prefix}fb\`\n\n<:dotfill:949721316553015366> __**General Commands**__\n\`${prefix}avatar\`\n\`${prefix}banner\`\n\`${prefix}come\`\n\`${prefix}ping\`\n\n__**Music Commands**__\n\`${prefix}play\`\n\n__**System Commands**__\n+UnderWork`)
         .setThumbnail(message.guild.iconURL({dynamic:true}))
-        .setImage(data.line_url)
         .setAuthor({name : `${client.user.username} Help Menu`})
         message.reply({embeds : [embed]})
     }
@@ -116,6 +115,7 @@ client.on('messageCreate' , async (message) => {
 client.on(`interactionCreate`,(interaction)=>{
     if(interaction.isCommand()){
      if(interaction.commandName == "set-config"){
+        if (!interaction.member.permissions.has("ADMINSTRATOR")) return interaction.reply(`You Don't Have Permission.`)
         const choice = interaction.options.getString('choose')
         if (choice === 'server'){
         const textinput = new DiscordModal.TextInput()
@@ -419,6 +419,8 @@ client.on('messageCreate' , async (message) => {
 client.on('messageCreate' , async (message) => {
     let data = await db.get(`config_${message.guildId}`)
     if (message.content.startsWith(prefix + 'blacklist')){
+        if (!message.member.permissions.has("ADMINSTRATOR")) return interaction.reply(`You Don't Have Permission.`)
+
         let args = message.content.split(" ").slice(1)
         let mention = message.mentions.members.first() || await client.users.fetch(args[0]); 
         console.log(client.users.cache.get(args[0]))
