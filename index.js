@@ -99,7 +99,8 @@ const rest = new REST({ version: '9' }).setToken(`OTYzNzY4OTI1OTQ0OTQyNjMz.G5hSB
 
 client.on('messageCreate' , async (message) => {
     let data = await db.get(`config_${message.guildId}`)
-    if (message.content.startsWith(prefix + 'help')){
+   if (!data) return message.channel.send("Please use `/set-config`")
+ if (message.content.startsWith(prefix + 'help')){
 
 
 
@@ -418,7 +419,8 @@ client.on('messageCreate' , async (message) => {
 
 client.on('messageCreate' , async (message) => {
     let data = await db.get(`config_${message.guildId}`)
-    if (message.content.startsWith(prefix + 'blacklist')){
+   if (!data) return message.channel.send("Please use `/set-config`")
+ if (message.content.startsWith(prefix + 'blacklist')){
         if (!message.member.permissions.has("ADMINSTRATOR")) return interaction.reply(`You Don't Have Permission.`)
 
         let args = message.content.split(" ").slice(1)
@@ -438,7 +440,8 @@ client.on('messageCreate' , async (message) => {
 
 client.on('messageCreate' , async (message) => {
     let data = await db.get(`config_${message.guildId}`)
-    if (message.content.startsWith(prefix + 'unblacklist')){
+   if (!data) return message.channel.send("Please use `/set-config`")
+ if (message.content.startsWith(prefix + 'unblacklist')){
         let args = message.content.split(" ").slice(1)
         let mention = message.mentions.members.first() || await client.users.fetch(args[0]); 
         console.log(client.users.cache.get(args[0]))
@@ -576,7 +579,8 @@ client.on('messageCreate' , async (message) => {
 
 client.on('messageCreate' , async (message) => {
     let data = await db.get(`config_${message.guildId}`)
-
+   if (!data) return message.channel.send("Please use `/set-config`")
+ if (!data.tax_id) return;
     if (message.channel.id === data.tax_id){
         const num = message.content.replace("k","000").replace("m", "000000").replace('M', "000000").replace('K', "000")
         if (message.author.bot) return;
