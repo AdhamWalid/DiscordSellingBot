@@ -75,6 +75,10 @@ client.on('ready' , async () => {
         type : "3",
         required : true,
 }]
+},
+{
+    name :"update",
+    description:"shows the bots latest update",
 }
 ]
     
@@ -294,7 +298,7 @@ client.on('messageCreate' , async (message) => {
     let line_url = await db.get(`config_${message.guildId}.line_url`)
 
     if (message.channel.id === transfer_id){
-        let tran =["transferred" , "بتحويل"]
+        let tran =["**transferred**" , "**بتحويل**"]
         if (!message.author.bot) return;
         if (tran.includes(message.content)){
             message.channel.send(line_url)
@@ -595,6 +599,16 @@ client.on('messageCreate' , async (message) => {
     }
     })
 
+client.on('interactionCreate' , async (interaction) => {
+    if (!interaction.isCommand()) return;
+        if (interaction.commandName === 'update'){
+            let embed = new Discord.MessageEmbed()
+            .setAuthor({name :`${client.user.username}'s Latest Update (v1.0.1)`})
+            .setDescription(`__New Music System__\n${prefix}play\n\n__Soon__\n:white_small_square: Moderation System\n:white_small_square: Giveaway System`)
+            interaction.reply({embeds:[embed]})
+        }
+    
+})
 
 
 client.login(`OTYzNzY4OTI1OTQ0OTQyNjMz.G5hSB1.4x7QxvJh14J3C6tuSoHGgFDv9grE_SpHw-v0Us`)
