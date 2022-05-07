@@ -227,7 +227,6 @@ client.on(`interactionCreate`,(interaction)=>{
         data["tag_id"] = interaction.fields[2].value
         data["post_id"] =interaction.fields[3].value
         data["offer_post_id"] =interaction.fields[4].value
-        data["offer_post_id"] =interaction.fields.value
 
         await db.set(`config_${interaction.guild.id}` , data)
 
