@@ -297,12 +297,10 @@ client.on('messageCreate' , async (message) => {
     let line_url = await db.get(`config_${message.guildId}.line_url`)
 
     if (message.channel.id === transfer_id){
-        let tran =["**transferred**" , "**بتحويل**"]
-        if (!message.author.bot) return;
-        if (tran.includes(message.content)){
+        let keyword = ['has transferred']
+        if (keyword.includes(message.content)){
             message.channel.send(line_url)
         }
-        
     }
 })
 
