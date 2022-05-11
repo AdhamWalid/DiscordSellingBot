@@ -421,7 +421,7 @@ client.on('messageCreate' , async (message) => {
 client.on('messageCreate' , async (message) => {
     let data = await db.get(`config_${message.guildId}`)
 if (!data) return; if (message.content.startsWith(prefix + 'blacklist')){
-        if (!message.member.permissions.has("ADMINSTRATOR")) return interaction.reply(`You Don't Have Permission.`)
+        if (!message.member.permissions.has("ADMINSTRATOR")) return messa.reply(`You Don't Have Permission.`)
 
         let args = message.content.split(" ").slice(1)
         let mention = message.mentions.members.first() || await client.users.fetch(args[0]); 
@@ -441,6 +441,8 @@ if (!data) return; if (message.content.startsWith(prefix + 'blacklist')){
 client.on('messageCreate' , async (message) => {
     let data = await db.get(`config_${message.guildId}`)
 if (!data) return; if (message.content.startsWith(prefix + 'unblacklist')){
+    if (!message.member.permissions.has("ADMINSTRATOR")) return messa.reply(`You Don't Have Permission.`)
+
         let args = message.content.split(" ").slice(1)
         let mention = message.mentions.members.first() || await client.users.fetch(args[0]); 
         console.log(client.users.cache.get(args[0]))
