@@ -438,6 +438,7 @@ if (!data) return; if (message.content.startsWith(prefix + 'blacklist')){
     }
 })
 
+
 client.on('messageCreate' , async (message) => {
     let data = await db.get(`config_${message.guildId}`)
 if (!data) return; if (message.content.startsWith(prefix + 'unblacklist')){
