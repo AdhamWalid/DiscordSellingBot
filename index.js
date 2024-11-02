@@ -1,7 +1,7 @@
 const Discord = require('discord.js')
 const client = new Discord.Client({intents : 32767 }) 
 const {Database}  = require("quickmongo");
-const db = new Database(`mongodb+srv://Adham:yZkCtO2Zt8t7PF8d@offarat-database.mwqdl.mongodb.net/offarat?retryWrites=true&w=majority`);
+const db = new Database(`MONGODB_String`);
 const wait = (time) => new Promise(resolve => setTimeout(() => resolve(true), time))
 const prefix = '#';
 const DiscordModal = require('discord-modal')
@@ -82,7 +82,7 @@ client.on('ready' , async () => {
 }
 ]
     
-const rest = new REST({ version: '9' }).setToken(`OTYzNzY4OTI1OTQ0OTQyNjMz.G5hSB1.4x7QxvJh14J3C6tuSoHGgFDv9grE_SpHw-v0Us`);
+const rest = new REST({ version: '9' }).setToken(`DISCORDBOT_TOKEN`);
 
 (async () => {
 	try {
@@ -611,4 +611,4 @@ client.on('interactionCreate' , async (interaction) => {
 })
 
 
-client.login(`OTYzNzY4OTI1OTQ0OTQyNjMz.G5hSB1.4x7QxvJh14J3C6tuSoHGgFDv9grE_SpHw-v0Us`)
+client.login(`DISCORDBOT_TOKEN`)
